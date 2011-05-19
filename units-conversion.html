@@ -1,0 +1,552 @@
+<HTML manifest="manifest.php">
+<!- ****************************************************************************
+ Unit Converter Calculator
+ Trey Arthur
+ Version 1.22
+ July 17, 2009
+
+ This is a simple JavaScript program to automate calculations frequently done at
+ NASA C/VIB VISTAS simulators.  The program converts units based on user input.
+
+ References: 
+   JavaScript for Dummies Quick Reference, c1997
+   Pratt & Whitney Aeronautical Vestpocket Handbook
+******************************************************************************->
+<HEAD><TITLE>Unit Converter v1.22</TITLE>
+
+<meta name="viewport" content="user-scalable=no, width=device-width" />
+<link rel="apple-touch-icon" href="taUnitConvert-icon.png"/>
+<link rel="stylesheet" type="text/css" href="iphone.css" media="only screen and (max-width: 320px)" />
+<link rel="stylesheet" type="text/css" href="desktop.css" media="screen and (min-width: 321px)" />
+
+<!--
+<link type="text/css" rel="stylesheet" media="screen" href="jqtouch/jqtouch.css">
+<link type="text/css" rel="stylesheet" media="screen" href="themes/jqt/theme.css">
+<script type="text/javascript" src="jqtouch/jquery.js"></script>
+<script type="text/javascript" src="jqtouch/jqtouch.js"></script>
+<script type="text/javascript">
+  var jQT = $.jQTouch({
+    icon: 'apple-touch-icon.png',
+    statusBar: 'black'
+  });
+</script>
+-->
+
+
+<!- JavaScript software ->
+<SCRIPT LANGUAGE="JavaScript">
+////////////////////////////////////////////////////////////////////////////////
+//
+// SetDecimalPlaces - This function will round the decimal places to the number 
+//  of places specified.
+//
+function SetDecimalPlaces(value,places)
+{
+  var factor = Math.pow(10,places)
+
+  var sendValue = Math.round( factor * value ) / factor
+
+  return sendValue
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  LengthConvert - function that does the conversion.
+//    The units picked by the user are stored in
+//    units (a global).  It returns the complete
+//    string of all the conversions.
+function LengthConvert(units,value)
+{
+  var output = "coming soon"
+
+  if( units == "centimeter" ) {
+    output  = Convert(value,3.2808e-2, " feet")
+    output += Convert(value,3.9370e-1, " inches")
+    output += Convert(value,1.0e-5,    " kilometers")
+    output += Convert(value,1.0e-2,    " meters")
+    output += Convert(value,1.0936e-2, " yards")
+  }
+  else if( units == "feet" ) {
+    output  = Convert(value,3.0480e+1, " centimeters")
+    output += Convert(value,12.0,      " inches")
+    output += Convert(value,3.0480e-4, " kilometers")
+    output += Convert(value,3.0480e-1, " meters")
+    output += Convert(value,1.8939e-4, " miles")
+    output += Convert(value,1.6458e-4, " nautical miles")
+    output += Convert(value,3.3333e-1, " yards")
+  }
+  else if( units == "inches" ) {
+    output  = Convert(value,2.5400,    " centimeters")
+    output += Convert(value,8.3333e-2, " feet")
+    output += Convert(value,2.5400e-2, " meters")
+    output += Convert(value,2.7778e-2, " yards")
+  }
+  else if( units == "kilometers" ) {
+    output  = Convert(value,3.2808e+3, " feet")
+    output += Convert(value,3.9370e+4, " inches")
+    output += Convert(value,1.0e+3,    " meters")
+    output += Convert(value,6.2137e-1, " miles")
+	output += Convert(value,5.3996e-1, " nautical miles")
+    output += Convert(value,1.0936e+3, " yards")
+  }
+  else if( units == "meters" ) {
+    output  = Convert(value,1.0000e+2, " centimeters")
+    output += Convert(value,3.2808,    " feet")
+    output += Convert(value,3.9370e+1, " inches")
+    output += Convert(value,1.0e-3,    " kilometers")
+    output += Convert(value,6.2137e-4, " miles")
+    output += Convert(value,5.3996e-4, " nautical miles")
+    output += Convert(value,1.0936,    " yards")
+  }
+  else if( units == "miles" ) {
+    output  = Convert(value,5.2800e+3, " feet")
+    output += Convert(value,6.3360e+4, " inches")
+    output += Convert(value,1.6093,    " kilometers")
+    output += Convert(value,1.6093e+3, " meters")
+    output += Convert(value,3.2000e+2, " rods")
+    output += Convert(value,1.7600e+3, " yards")
+  }
+  else if( units == "nautical miles" ) {
+    output  = Convert(value,6.0761e+3, " feet")
+    output += Convert(value,1.8520e+3, " meters")
+  }
+  else if( units == "yards" ) {
+    output  = Convert(value,9.1440e+1, " centimeters")
+    output += Convert(value,3.0000,    " feet")
+    output += Convert(value,3.6000e+1, " inches")
+    output += Convert(value,9.1440e-4, " kilometers")
+    output += Convert(value,9.1440e-1, " meters")
+    output += Convert(value,5.6818e-4, " miles")
+    output += Convert(value,1.8182e-1, " rods")
+  }
+
+  return output
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//
+function MeteorologyConvert(units,value)
+{
+  var output = "coming soon"
+
+  value = parseFloat(value)
+
+  if( units == "atmospheres" ) {
+    output  = Convert(value ,7.6000e+1," cm Hg")
+    output += Convert(value ,2.9921e+1," inches Hg")
+    output += Convert(value ,1.0332e+4," kg/square m")
+    output += Convert(value ,1.0133e+5," N/square m")
+    output += Convert(value ,1.4696e+1," psi")
+  }
+  else if( units == "bars" ) {
+    output  = Convert(value ,9.8692e-1," atmospheres")
+    output += Convert(value ,1.0000e+6," dynes/square cm")
+    output += Convert(value ,2.9530e+1," inches Hg")
+    output += Convert(value ,7.5006e+2," mm Hg")
+    output += Convert(value ,1.0000e+5," N/square m")
+    output += Convert(value ,1.4504e+1," psi")
+  }
+  else if( units == "dynes/square centimeters" ) {
+    output  = Convert(value ,2.9530e-5," inches Hg")
+    output += Convert(value ,1.0197e-2," kg/square m")
+    output += Convert(value ,7.5006e-4," mm Hg")
+    output += Convert(value ,1.0000e+1," N/square m")
+    output += Convert(value ,1.4504e-5," psi")
+  }
+  else if( units == "inches of mercury" ) {
+    output  = Convert(value ,3.3421e-2," atmosphere")
+    output += Convert(value ,3.3864e-2," bars")
+    output += Convert(value ,3.3864e+4," dynes/square m")
+    output += Convert(value ,1.3595e+1," inches of water")
+    output += Convert(value ,2.5400e+1," mm Hg")
+    output += Convert(value ,3.3864e+3," N/square m")
+    output += Convert(value ,7.0727e+1," psf")
+    output += Convert(value ,4.9116e-1," psi")
+  }
+  else if( units == "inches of water" ) {
+    output  = Convert(value ,2.4584e-3," atmosphere")
+    output += Convert(value ,7.3556e-2," inches Hg")
+    output += Convert(value ,1.8683,   " mm Hg")
+    output += Convert(value ,2.4910e+2," N/square m")
+    output += Convert(value ,3.6128e-2," psi")
+  }
+  else if( units == "kilograms/square meter" ) {
+    output  = Convert(value ,9.6783e-5," atmospheres")
+    output += Convert(value ,9.8067e-5," bars")
+    output += Convert(value ,2.8959e-3," inches Hg")
+    output += Convert(value ,9.8067,   " N/square m")
+  }
+  else if( units == "millimeters of mercury" ) {
+    output  = Convert(value ,1.3332e+3," dynes/square cm")
+    output += Convert(value ,3.9370e-2," inches Hg")
+    output += Convert(value ,5.3526e-1," inches of water")
+    output += Convert(value ,1.3332e+2," N/square m")
+    output += Convert(value ,1.9337e-2," psi")
+  }
+  else if( units == "pascals" ) {
+    output  = Convert(value ,9.8692e-6," atmospheres")
+    output += Convert(value ,1.0000e+1," dynes/square cm")
+    output += Convert(value ,2.9530e-4," inches Hg")
+    output += Convert(value ,1.0197e-1," kg/square m")
+    output += Convert(value ,6.7200e-1," poundals/square ft")
+    output += Convert(value ,2.0885e-2," psf")
+    output += Convert(value ,1.4504e-4," psi")
+  }
+  else if( units == "pounds/square foot" ) {
+    output  = Convert(value ,4.7254e-4," atmospheres")
+    output += Convert(value ,4.7880e-4," bars")
+    output += Convert(value ,4.7880e+2," dynes/square cm")
+    output += Convert(value ,1.4139e-2," inches Hg")
+    output += Convert(value ,4.8824,   " kg/square m")
+    output += Convert(value ,4.7880e+1," N/square m")
+    output += Convert(value ,3.2174e+1," poundals/square ft")
+    output += Convert(value ,6.9444e-3," psi")
+  }
+  else if( units == "pounds/square inch" ) {
+    output  = Convert(value ,6.8046e-2," atmospheres")
+    output += Convert(value ,6.8948e+4," dynes/square cm")
+    output += Convert(value ,2.0360,   " inches Hg")
+    output += Convert(value ,2.7681e+1," inches of water")
+    output += Convert(value ,7.0307e+2," kg/square m")
+    output += Convert(value ,6.8948e+3," N/square meter")
+    output += Convert(value ,4.6333e+3," poundals/square ft")
+    output += Convert(value ,1.4400e+2," psf")
+  }
+
+  return output 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//
+function SpeedConvert(units,value)
+{
+  var output = "coming soon"
+
+  if( units == "centimeter/sec" ) {
+    output  = Convert(value,3.2808e-2,  " feet/second")
+    output += Convert(value,3.9370e-1,  " inches/sec")
+    output += Convert(value,1.0e-2,     " meters/second")
+  }
+  else if( units == "feet/second" ) {
+    output  = Convert(value,30.480,  " cm/second")
+    output += Convert(value,1.0973,  " km/hour")
+    output += Convert(value,0.59248, " knots")
+    output += Convert(value,0.30480, " meters/second")
+    output += Convert(value,0.68182, " miles/hour")
+  }
+  else if( units == "inches/sec" ) {
+    output  = Convert(value,2.5400,    " cm/second")
+    output += Convert(value,8.3333e-2, " feet/second")
+    output += Convert(value,2.5400e-2, " meters/second")
+  }
+  else if( units == "kilometers/hour" ) {
+    output  = Convert(value,9.1130e-2, " feet/second")
+    output += Convert(value,5.3960e-1, " knots")
+    output += Convert(value,6.2137e-1, " miles/hour")
+    output += Convert(value,2.7778e-1, " meters/second")
+  }
+  else if( units == "knots" ) {
+    output  = Convert(value,1.6890,  " feet/second")
+    output += Convert(value,1.1516,  " miles/hour")
+    output += Convert(value,1.8532,  " km/hour")
+    output += Convert(value,0.51480, " meters/second")
+  }
+  else if( units == "meters/second" ) {
+    output  = Convert(value,3.2808, " feet/second")
+    output += Convert(value,3.6000, " km/hour")
+    output += Convert(value,1.9438, " knots")
+    output += Convert(value,2.2369, " miles/hour")
+  }
+  else if( units == "miles/hour" ) {
+    output  = Convert(value,1.4667,    " feet/second")
+    output += Convert(value,1.6093,    " km/hour")
+    output += Convert(value,8.6898e-1, " knots")
+    output += Convert(value,4.4704e-1, " meters/second")
+  }
+
+  return output 
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//
+function TemperatureConvert(units,value)
+{
+  var output = "coming soon"
+
+  value = parseFloat(value)
+
+  if( units == "Celsius" ) {
+    var fahrenheit = 9.0 / 5.0 * (value + 40.0) - 40.0
+    var rankine    = fahrenheit + 459.67
+    var kelvin     = value + 273.15
+
+    output  = Convert(fahrenheit ,1.0,  " Fahrenheit")
+    output += Convert(kelvin     ,1.0,  " Kelvin")
+    output += Convert(rankine    ,1.0,  " Rankine")
+  }
+  else if( units == "Fahrenheit" ) {
+    var celsius = 5.0 / 9.0 * (value + 40.0) - 40.0
+    var rankine = value + 459.67
+    var kelvin  = celsius + 273.15
+
+    output  = Convert(celsius ,1.0,  " Celsius")
+    output += Convert(kelvin  ,1.0,  " Kelvin")
+    output += Convert(rankine ,1.0,  " Rankine")
+  }
+  else if( units == "Kelvin" ) {
+    var celsius    = value - 273.15
+    var fahrenheit = 9.0 / 5.0 * (celsius + 40.0) - 40.0
+    var rankine    = fahrenheit + 459.67
+
+    output  = Convert(celsius    ,1.0,  " Celsius")
+    output += Convert(fahrenheit ,1.0,  " Fahrenheit")
+    output += Convert(rankine    ,1.0,  " Rankine")
+  }
+  else if( units == "Rankine" ) {
+    var fahrenheit = value - 459.67
+    var celsius    = 5.0 / 9.0 * (fahrenheit + 40.0) - 40.0
+    var kelvin     = celsius + 273.15
+
+    output  = Convert(celsius    ,1.0,  " Celsius")
+    output += Convert(fahrenheit ,1.0,  " Fahrenheit")
+    output += Convert(kelvin     ,1.0,  " Kelvin")
+  }
+
+  return output 
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//
+function WeightConvert(units,value)
+{
+  var output = "coming soon"
+
+  value = parseFloat(value)
+
+  if( units == "grams" ) {
+    output  = Convert(value ,1.0000e-3," kilograms")
+    output += Convert(value ,3.5274e-2," ounces")
+    output += Convert(value ,2.2046e-3," pounds")
+    output += Convert(value ,9.8067e+2," dynes")
+    output += Convert(value ,9.8067e-3," newtons")
+  }
+  else if( units == "kilograms" ) {
+    output  = Convert(value ,1.0000e+3," grams")
+    output += Convert(value ,3.5274e+1," ounces")
+    output += Convert(value ,2.2046,   " pounds")
+    output += Convert(value ,6.8521e-2," slugs")
+    output += Convert(value ,9.8067,   " newtons")
+    output += Convert(value ,7.9290e+1," poundals")
+  }
+  else if( units == "ounces" ) {
+    output  = Convert(value ,2.8349e+1," grams")
+    output += Convert(value ,2.8349e-2," kilograms")
+    output += Convert(value ,6.2500e-2," pounds")
+    output += Convert(value ,1.9428e-3," slugs")
+    output += Convert(value ,2.7801e+4," dynes")
+  }
+  else if( units == "newtons" ) {
+    output  = Convert(value ,1.0000e+5," dynes")
+    output += Convert(value ,1.0197e+2," grams")
+    output += Convert(value ,1.0197e-1," kilograms")
+    output += Convert(value ,2.2481e-1," pounds")
+    output += Convert(value ,7.2330,   " poundals")
+  }
+  else if( units == "pounds" ) {
+    output  = Convert(value ,4.5359e+2," grams")
+    output += Convert(value ,4.5359e-1," kilograms")
+    output += Convert(value ,1.6000e+1," ounces")
+  }
+  else if( units == "poundals" ) {
+    output  = Convert(value ,1.4098e-2," kilograms")
+    output += Convert(value ,1.3825e-1," newtons")
+    output += Convert(value ,3.1081e-2," pounds")
+  }
+  else if( units == "slugs" ) {
+    output  = Convert(value ,1.4594e+4," grams")
+    output += Convert(value ,1.4594e+1," kilograms")
+    output += Convert(value ,5.1478e+2," ounces")
+    output += Convert(value ,3.2174e+1," pounds")
+  }
+
+  return output 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Convert - this function inputs the value to be
+//    converted, the conversion factor and the units
+//    of the converted value.  It sets the number of
+//    decimal places to 4.
+function Convert(value,factor,units)
+{
+  var output  = SetDecimalPlaces( value*factor, 4 ) + units + "\n"
+
+  return output    
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  UnitsString - function to extract units from input
+//
+function UnitsString( data )
+{
+  var inData = data.toLowerCase()
+  var units = ""
+  for(var i=0; i<inData.length;i++)
+  {
+    var c = inData.charAt(i)
+    if ( c != "0" && !parseFloat( c ) )
+    {
+      if ( c != " " && c != "." && c != "-" )
+        units += c
+    }
+  }
+  
+  return units
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  GetUnits -  checks if passed in units equals one of the accepted strings
+//    
+function GetUnits(inUnits , accUnits )
+{
+	var value = false
+	var allUnits = accUnits.split(":")
+	
+	for(var i=0; i<allUnits.length; i++)
+	{
+		if( inUnits == allUnits[i] ) value = true
+	}
+	
+	return value
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  CheckUnits -  checks if passed in units equals one of the accepted strings
+//    
+function CheckUnits(inUnits , accUnits , outUnits , inValue , type)
+{
+	var output = "--not supported--"
+	
+	var match = false
+	var allUnits = accUnits.split(":")
+	
+	for(var i=0; i<allUnits.length; i++)
+	{
+		if( inUnits == allUnits[i] ) match = true
+	}
+	
+	if ( match )
+	{
+		if ( type == "length" ) output = LengthConvert( outUnits , inValue )
+	}
+	
+	return output
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ButtonClick- function called when the execute
+//    button is clicked
+function ButtonClick()
+{
+  var data = document.convertForm.inputValue.value
+  var value = parseFloat(data)
+  var units = UnitsString( data )
+  
+  var output = "--not supported--"
+  
+  // Lengths
+  //if ( units == "cm" || units == "centimeter" || units == "centimeters") output = LengthConvert("centimeter",value)
+  //if ( units == "ft" || units == "feet" || units == "foot" || units == "'") output = LengthConvert("feet",value)
+  //if ( units == "in" || units == "inch" || units == "inches" || units == '"' ) output = LengthConvert("inches",value)
+  //if ( units == "km" || units == "kilometer" || units == "kilometers" ) output = LengthConvert("kilometers",value)
+  //if ( units == "m"  || units == "meter" || units == "meters" ) output = LengthConvert("meters",value)
+  output = CheckUnits( units , "cm:centimeter:centimeters" , "centimeter" , value , "length" )
+  
+  //if ( GetUnits( units , "cm:centimeter:centimeters" ) ) output = LengthConvert("centimeter",value)
+  if ( GetUnits( units , "ft:feet:foot:'" ) ) output = LengthConvert("feet",value)
+  if ( GetUnits( units , 'in:inch:inches:"') ) output = LengthConvert("inches",value)
+  if ( GetUnits( units , "km:kilometer:kilometers" ) ) output = LengthConvert("kilometers",value)
+  if ( GetUnits( units , "m:meter:meters" ) ) output = LengthConvert("meters",value)
+  
+  if ( units == "mi" || units == "mile" || units == "miles" ) output = LengthConvert("miles",value)
+  if ( units == "nmi" || units == "nautical mile" || units == "nautical miles" ) output = LengthConvert("nautical miles",value)
+  if ( units == "yd" || units == "yard" || units == "yards" ) output = LengthConvert("yards",value)
+  
+  // Temperature
+  if ( units == "celsius" || units == "c" ) output = TemperatureConvert("Celsius",value)
+  if ( units == "fahrenheit" || units == "f" ) output = TemperatureConvert("Fahrenheit",value)
+  if ( units == "kelvin" || units == "k" ) output = TemperatureConvert("Kelvin",value)
+  if ( units == "rankine" || units == "r" ) output = TemperatureConvert("Rankine",value)
+  
+  // Weight
+  if ( units == "grams" || units == "gram" ||units == "g" ) output = WeightConvert("grams",value)
+  if ( units == "kilograms" || units == "kilogram" || units == "kg" ) output = WeightConvert("kilograms",value)
+  if ( units == "ounces" || units == "ounce" ||units == "oz" ) output = WeightConvert("ounces",value)
+  if ( units == "newtons" || units == "newton" || units == "n" ) output = WeightConvert("newtons",value)
+  if ( units == "pounds" || units == "pound" || units == "#" ) output = WeightConvert("pounds",value)
+  if ( units == "poundals" || units == "poundal" ) output = WeightConvert("poundals",value)
+  if ( units == "slugs" || units == "slug" ) output = WeightConvert("slugs",value)
+  
+  // Speed
+  if ( units == "centimeter/second" || units == "centimeters/second" ||units == "cm/s" ) output = SpeedConvert("centimeter/sec",value)
+  if ( units == "feet/second" || units == "fps" ||units == "ft/s" ) output = SpeedConvert("feet/second",value)
+  if ( units == "inches/second" || units == "inch/second" ||units == "in/s" ) output = SpeedConvert("inches/sec",value)
+  if ( units == "kilometers/hour" || units == "kilometer/hour" ||units == "km/hr" ) output = SpeedConvert("kilometers/hour",value)
+  if ( units == "knots" || units == "knot" ||units == "kt" ) output = SpeedConvert("knots",value)
+  if ( units == "meters/second" || units == "meter/second" ||units == "m/s" ) output = SpeedConvert("meters/second",value)
+  if ( units == "miles/hour" || units == "mile/hour" ||units == "mph" ||units == "mi/hr") output = SpeedConvert("miles/hour",value)
+  
+  // Meteorology
+  if ( units == "atmospheres" || units =="atmosphere" ||units == "atm" ) output = MeteorologyConvert("atmospheres",value)
+  if ( units == "bars"  ) output = MeteorologyConvert("bars",value)
+  if ( units == "dynes/square centimeters" || units =="dynes/cm^2" ||units == "dynes/cm2" ) output = MeteorologyConvert("dynes/square centimeters",value)
+  
+  document.convertForm.outputUnits.value = output
+}
+
+function handleKeyPress(e,form)
+{
+  var key=e.keyCode || e.which;
+  if (key==13 || key==10) 
+  {
+    e.preventDefault();
+    ButtonClick();
+    document.getElementById('backLink').focus();
+    return false;
+  }
+  else
+    return true;
+}
+</SCRIPT>
+
+<BODY onload="setTimeout(function() { window.scrollTo(0, 1) }, 100);">
+<FORM NAME="convertForm">
+
+<!- User input value to be converted ->
+
+<INPUT TYPE="number" PLACEHOLDER="Value Units" NAME="inputValue" onkeypress="handleKeyPress(event,this.form)">
+<a href="#" id="backLink"></a>
+
+<!- Outputs ->
+
+<P>
+<TEXTAREA NAME="outputUnits" ROWS=15 COLS=30>
+</TEXTAREA>
+
+</FORM>
+</BODY>
+
+</HEAD>
+</HTML>

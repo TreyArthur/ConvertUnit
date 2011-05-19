@@ -1,0 +1,137 @@
+application ConvertUnit
+
+import mobl::ui::generic
+
+screen root() 
+{
+	var unitStr = "34cm"
+	
+	header("Unit Converter")
+	group
+	{
+		item { textField(unitStr  , label="Unit") }
+		item { "->" label( ButtonClick( unitStr ) )}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  UnitsString - function to extract units from input
+//
+function UnitsString( data : String ) : String
+{
+  var inData = data.toLowerCase();
+  var units = "";
+  var i = 0;
+  while( i<inData.length )
+  {
+    var c = inData.charAt(i);
+    
+    if ( Math.isNaN(parseNum( c )) )
+    {
+      if ( c != " " && c != "." && c != "-" )
+        units = units + c;
+    }
+    
+    i = i+1;
+  }
+  
+  return units;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// SetDecimalPlaces - This function will round the decimal places to the number 
+//  of places specified.
+//
+function SetDecimalPlaces(value : Num , places : Num) : Num
+{
+  var factor : Num = Math.pow(10.0,places);
+
+  var decimalValue : Num = Math.round( factor * value ) / factor;
+
+  return decimalValue;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Convert - this function inputs the value to be
+//    converted, the conversion factor and the units
+//    of the converted value.  It sets the number of
+//    decimal places to 4.
+function Convert(value : Num , factor : Num , units : String) : String
+{
+  var output  = SetDecimalPlaces( value*factor, 4 ).toString() + units;// + "\n";
+
+  return output;  
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  LengthConvert - function that does the conversion.
+//    The units picked by the user are stored in
+//    units (a global).  It returns the complete
+//    string of all the conversions.
+function LengthConvert(units : String , value : Num) : String
+{
+  var output = "coming soon";
+
+  if( units == "centimeter" ) {
+    output  = Convert(value,3.2808e-2, " feet");
+    // output  = output + Convert(value,3.9370e-1, " inches");
+    // output  = output + Convert(value,1.0e-5,    " kilometers");
+    // output  = output + Convert(value,1.0e-2,    " meters");
+    // output  = output + Convert(value,1.0936e-2, " yards");
+  }
+
+  return output;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  CheckUnits -  checks if passed in units equals one of the accepted strings
+//    
+function CheckUnits(inUnits : String , accUnits : String , outUnits : String , inValue : Num , type : String) : String
+{
+	var output = "--Not Supported--";
+	
+	var match = false;
+	var allUnits = accUnits.split(":");
+	
+	var i=0;
+	while( i<allUnits.length )
+	{
+		if( inUnits == allUnits.get(i) ) match = true;
+		i=i+1;
+	}
+	
+	if ( match )
+	{
+		if ( type == "length" ) output = LengthConvert( outUnits , inValue );
+	}
+	
+	return output;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ButtonClick- function called when the execute
+//    button is clicked
+function ButtonClick(data : String) : String
+{
+  var value = parseNum(data);
+  var units = UnitsString( data );
+  
+  var output = "--not supported--";
+  
+  // Lengths
+  //if ( units == "cm" || units == "centimeter" || units == "centimeters") output = LengthConvert("centimeter",value)
+  //if ( units == "ft" || units == "feet" || units == "foot" || units == "'") output = LengthConvert("feet",value)
+  //if ( units == "in" || units == "inch" || units == "inches" || units == '"' ) output = LengthConvert("inches",value)
+  //if ( units == "km" || units == "kilometer" || units == "kilometers" ) output = LengthConvert("kilometers",value)
+  //if ( units == "m"  || units == "meter" || units == "meters" ) output = LengthConvert("meters",value)
+  output = CheckUnits( units , "cm:centimeter:centimeters" , "centimeter" , value , "length" );
+  
+  return output;
+}
+

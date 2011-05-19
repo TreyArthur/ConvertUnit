@@ -1,0 +1,9 @@
+# dir to ignore
+_SYNCAPP
+www
+.cache
+
+# files to ignore
+*.jar
+*.bat
+
