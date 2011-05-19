@@ -1,3 +1,6 @@
 configuration
 
 title "ConvertUnit"
+version "0.1"
+icon taUnitConvert-icon.png
+offline

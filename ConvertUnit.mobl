@@ -4,13 +4,16 @@ import mobl::ui::generic
 
 screen root() 
 {
-	var unitStr = "34cm"
+	var unitStr = ""
 	
 	header("Unit Converter")
 	group
 	{
-		item { textField(unitStr  , label="Unit") }
-		item { "->" label( ButtonClick( unitStr ) )}
+		item { textField(unitStr  , label="Enter Value Unit (ex 34cm)") }
+		list( unitC in Converter(unitStr) )
+		{
+			item { label( unitC )}
+		}
 	}
 }
 
@@ -59,55 +62,145 @@ function SetDecimalPlaces(value : Num , places : Num) : Num
 //    converted, the conversion factor and the units
 //    of the converted value.  It sets the number of
 //    decimal places to 4.
+//
 function Convert(value : Num , factor : Num , units : String) : String
 {
-  var output  = SetDecimalPlaces( value*factor, 4 ).toString() + units;// + "\n";
+  var output  = SetDecimalPlaces( value*factor, 4 ).toString() + units;
 
   return output;  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  LengthConvert - function that does the conversion.
-//    The units picked by the user are stored in
-//    units (a global).  It returns the complete
-//    string of all the conversions.
-function LengthConvert(units : String , value : Num) : String
+//  ConvertData - function that does the conversion.
+//
+function ConvertData(units : String , value : Num) : Array<String>
 {
-  var output = "coming soon";
+  var output = Array<String>();
 
   if( units == "centimeter" ) {
-    output  = Convert(value,3.2808e-2, " feet");
-    // output  = output + Convert(value,3.9370e-1, " inches");
-    // output  = output + Convert(value,1.0e-5,    " kilometers");
-    // output  = output + Convert(value,1.0e-2,    " meters");
-    // output  = output + Convert(value,1.0936e-2, " yards");
+    output.push( Convert(value,3.2808e-2, " feet") );
+    output.push( Convert(value,3.9370e-1, " inches") );
+    output.push( Convert(value,1.0e-5,    " kilometers") );
+    output.push( Convert(value,1.0e-2,    " meters") );
+    output.push( Convert(value,1.0936e-2, " yards") );
+  }
+  else if( units == "feet" ) {
+    output.push( Convert(value,3.0480e+1, " centimeters") );
+    output.push( Convert(value,12.0     , " inches") );
+    output.push( Convert(value,3.0480e-4, " kilometers") );
+    output.push( Convert(value,3.0480e-1, " meters") );
+    output.push( Convert(value,1.8939e-4, " miles") );
+    output.push( Convert(value,1.6458e-4, " nautical miles") );
+    output.push( Convert(value,3.3333e-1, " yards") );
+  }
+  else if( units == "inches" ) {
+    output.push( Convert(value,2.5400,    " centimeters") );
+    output.push( Convert(value,8.3333e-2, " feet") );
+    output.push( Convert(value,2.5400e-2, " meters") );
+    output.push( Convert(value,2.7778e-2, " yards") );
+  }
+  else if( units == "kilometers" ) {
+    output.push( Convert(value,3.2808e+3, " feet") );
+    output.push( Convert(value,3.9370e+4, " inches") );
+    output.push( Convert(value,1.0e+3,    " meters") );
+    output.push( Convert(value,6.2137e-1, " miles") );
+	output.push( Convert(value,5.3996e-1, " nautical miles") );
+    output.push( Convert(value,1.0936e+3, " yards") );
+  }
+  else if( units == "meters" ) {
+    output.push( Convert(value,1.0000e+2, " centimeters") );
+    output.push( Convert(value,3.2808,    " feet") );
+    output.push( Convert(value,3.9370e+1, " inches") );
+    output.push( Convert(value,1.0e-3,    " kilometers") );
+    output.push( Convert(value,6.2137e-4, " miles") );
+    output.push( Convert(value,5.3996e-4, " nautical miles") );
+    output.push( Convert(value,1.0936,    " yards") );
+  }
+  else if( units == "miles" ) {
+    output.push( Convert(value,5.2800e+3, " feet") );
+    output.push( Convert(value,6.3360e+4, " inches") );
+    output.push( Convert(value,1.6093,    " kilometers") );
+    output.push( Convert(value,1.6093e+3, " meters") );
+    output.push( Convert(value,3.2000e+2, " rods") );
+    output.push( Convert(value,1.7600e+3, " yards") );
+  }
+  else if( units == "nautical miles" ) {
+    output.push( Convert(value,6.0761e+3, " feet") );
+    output.push( Convert(value,1.8520e+3, " meters") );
+  }
+  else if( units == "yards" ) {
+    output.push( Convert(value,9.1440e+1, " centimeters") );
+    output.push( Convert(value,3.0000,    " feet") );
+    output.push( Convert(value,3.6000e+1, " inches") );
+    output.push( Convert(value,9.1440e-4, " kilometers") );
+    output.push( Convert(value,9.1440e-1, " meters") );
+    output.push( Convert(value,5.6818e-4, " miles") );
+    output.push( Convert(value,1.8182e-1, " rods") );
+  }
+  else if( units == "feet/second" ) {
+    output.push( Convert(value,30.480,  " cm/second") );
+    output.push( Convert(value,1.0973,  " km/hour") );
+    output.push( Convert(value,0.59248, " knots") );
+    output.push( Convert(value,0.30480, " meters/second") );
+    output.push( Convert(value,0.68182, " miles/hour") );
+  }
+  else if( units == "knots" ) {
+    output.push( Convert(value,1.6890,  " feet/second") );
+    output.push( Convert(value,1.1516,  " miles/hour") );
+    output.push( Convert(value,1.8532,  " km/hour") );
+    output.push( Convert(value,0.51480, " meters/second") );
+  }
+  else if( units == "miles/hour" ) {
+    output.push( Convert(value,1.4667,    " feet/second") );
+    output.push( Convert(value,1.6093,    " km/hour") );
+    output.push( Convert(value,8.6898e-1, " knots") );
+    output.push( Convert(value,4.4704e-1, " meters/second") );
   }
 
   return output;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//
-//  CheckUnits -  checks if passed in units equals one of the accepted strings
-//    
-function CheckUnits(inUnits : String , accUnits : String , outUnits : String , inValue : Num , type : String) : String
+function SearchUnits(value : Num , units : String) : Array<String>
 {
-	var output = "--Not Supported--";
+	var unitsDb = [
+		"cm:centimeter:centimeters=centimeter",
+		"ft:feet:foot:'=feet",
+		"in:inches:inch:\"=inches",
+		"km:kilometer:kilometers=kilometers",
+		"m:meter:meters=meters",
+		"mi:mile:miles=miles",
+		"nmi:nautical miles=nautical miles",
+		"yd:yard:yards=yards",
+		"feet/second:fps:ft/s=feet/second",
+		"knots:knot:kt=knots",
+		"miles/hour:mile/hour:mph:mi/hr=miles/hour"
+	];
 	
-	var match = false;
-	var allUnits = accUnits.split(":");
+	var output = Array<String>();
 	
 	var i=0;
-	while( i<allUnits.length )
+	while ( i<unitsDb.length )
 	{
-		if( inUnits == allUnits.get(i) ) match = true;
+		var match = false;
+		
+		var unitStr = unitsDb[i].split("=");
+		var allUnits = unitStr[0].split(":");
+		var outUnits = unitStr[1];
+		
+		var j=0;
+		while( j<allUnits.length )
+		{
+			if( units == allUnits.get(j) ) match = true;
+			j=j+1;
+		}
+		
+		if ( match )
+		{
+			output = ConvertData( outUnits , value );
+		}
+		
 		i=i+1;
-	}
-	
-	if ( match )
-	{
-		if ( type == "length" ) output = LengthConvert( outUnits , inValue );
 	}
 	
 	return output;
@@ -115,22 +208,15 @@ function CheckUnits(inUnits : String , accUnits : String , outUnits : String , i
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  ButtonClick- function called when the execute
-//    button is clicked
-function ButtonClick(data : String) : String
+//  Converter- function that converts string into differnt units
+function Converter(data : String) : Array<String>
 {
-  var value = parseNum(data);
-  var units = UnitsString( data );
+  var value = parseNum( data );
+  var units = UnitsString( data ).toLowerCase();
   
-  var output = "--not supported--";
+  var output = Array<String>();
   
-  // Lengths
-  //if ( units == "cm" || units == "centimeter" || units == "centimeters") output = LengthConvert("centimeter",value)
-  //if ( units == "ft" || units == "feet" || units == "foot" || units == "'") output = LengthConvert("feet",value)
-  //if ( units == "in" || units == "inch" || units == "inches" || units == '"' ) output = LengthConvert("inches",value)
-  //if ( units == "km" || units == "kilometer" || units == "kilometers" ) output = LengthConvert("kilometers",value)
-  //if ( units == "m"  || units == "meter" || units == "meters" ) output = LengthConvert("meters",value)
-  output = CheckUnits( units , "cm:centimeter:centimeters" , "centimeter" , value , "length" );
+  output = SearchUnits( value , units );
   
   return output;
 }
