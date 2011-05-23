@@ -7,21 +7,56 @@ screen root()
 	var unitStr = ""
 	
 	header("Unit Converter")
+	{
+		button("About", onclick={ about(); })
+	}
+	
 	group
 	{
+		// this is where the user enters the units to be converted
 		item { textField(unitStr  , label="Enter Value Unit (ex 34cm)") }
-		list( unitC in Converter(unitStr) )
+		
+		// this displays the converted units (if supported)
+		list( unitC in SearchUnits(unitStr) )
 		{
 			item { label( unitC )}
 		}
 	}
 }
 
+screen about()
+{
+	header("About")
+	{
+		backButton()
+	}
+	
+	group()
+	{
+		"ConvertUnit - simple unit converter <br>"
+	    "Copyright (C) 2011 <br>"
+	    "Trey Arthur: treyarthur3 -at- gmail +dot+ com"
+		"<br><br>"
+	    "This program is free software: you can redistribute it and/or modify "
+	    "it under the terms of the GNU General Public License as published by "
+	    "the Free Software Foundation, either version 3 of the License, or "
+	    "any later version."
+		"<br><br>"
+	    "This program is distributed in the hope that it will be useful, "
+	    "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+	    "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+	    "GNU General Public License for more details."
+		"<br><br>"
+	    link("http://www.gnu.org/licenses/")
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  UnitsString - function to extract units from input
+//  UnitsScrapper - function to extract units from input.  For example, if the
+//    input string is '34cm', this function will return the string 'cm'
 //
-function UnitsString( data : String ) : String
+function UnitsScrapper( data : String ) : String
 {
   var inData = data.toLowerCase();
   var units = "";
@@ -58,125 +93,45 @@ function SetDecimalPlaces(value : Num , places : Num) : Num
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Convert - this function inputs the value to be
-//    converted, the conversion factor and the units
-//    of the converted value.  It sets the number of
+//  Convert - this function inputs the value to be converted, the conversion 
+//    factor and the units of the newly converted value.  It sets the number of
 //    decimal places to 4.
 //
 function Convert(value : Num , factor : Num , units : String) : String
 {
-  var output  = SetDecimalPlaces( value*factor, 4 ).toString() + units;
+  var output  = SetDecimalPlaces( value*factor, 4 ).toString() + " " + units;
 
   return output;  
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  ConvertData - function that does the conversion.
+//  SearchUnits - this functions searches through the known units database for
+//    a match of units.  Once the unit conversion is identified (ie, a 'match')
+//    the unit conversion is done.
 //
-function ConvertData(units : String , value : Num) : Array<String>
+function SearchUnits(data : String) : Array<String>
 {
-  var output = Array<String>();
+	// separte the number from the units string
+	var value = parseNum( data );
+    var units = UnitsScrapper( data );
 
-  if( units == "centimeter" ) {
-    output.push( Convert(value,3.2808e-2, " feet") );
-    output.push( Convert(value,3.9370e-1, " inches") );
-    output.push( Convert(value,1.0e-5,    " kilometers") );
-    output.push( Convert(value,1.0e-2,    " meters") );
-    output.push( Convert(value,1.0936e-2, " yards") );
-  }
-  else if( units == "feet" ) {
-    output.push( Convert(value,3.0480e+1, " centimeters") );
-    output.push( Convert(value,12.0     , " inches") );
-    output.push( Convert(value,3.0480e-4, " kilometers") );
-    output.push( Convert(value,3.0480e-1, " meters") );
-    output.push( Convert(value,1.8939e-4, " miles") );
-    output.push( Convert(value,1.6458e-4, " nautical miles") );
-    output.push( Convert(value,3.3333e-1, " yards") );
-  }
-  else if( units == "inches" ) {
-    output.push( Convert(value,2.5400,    " centimeters") );
-    output.push( Convert(value,8.3333e-2, " feet") );
-    output.push( Convert(value,2.5400e-2, " meters") );
-    output.push( Convert(value,2.7778e-2, " yards") );
-  }
-  else if( units == "kilometers" ) {
-    output.push( Convert(value,3.2808e+3, " feet") );
-    output.push( Convert(value,3.9370e+4, " inches") );
-    output.push( Convert(value,1.0e+3,    " meters") );
-    output.push( Convert(value,6.2137e-1, " miles") );
-	output.push( Convert(value,5.3996e-1, " nautical miles") );
-    output.push( Convert(value,1.0936e+3, " yards") );
-  }
-  else if( units == "meters" ) {
-    output.push( Convert(value,1.0000e+2, " centimeters") );
-    output.push( Convert(value,3.2808,    " feet") );
-    output.push( Convert(value,3.9370e+1, " inches") );
-    output.push( Convert(value,1.0e-3,    " kilometers") );
-    output.push( Convert(value,6.2137e-4, " miles") );
-    output.push( Convert(value,5.3996e-4, " nautical miles") );
-    output.push( Convert(value,1.0936,    " yards") );
-  }
-  else if( units == "miles" ) {
-    output.push( Convert(value,5.2800e+3, " feet") );
-    output.push( Convert(value,6.3360e+4, " inches") );
-    output.push( Convert(value,1.6093,    " kilometers") );
-    output.push( Convert(value,1.6093e+3, " meters") );
-    output.push( Convert(value,3.2000e+2, " rods") );
-    output.push( Convert(value,1.7600e+3, " yards") );
-  }
-  else if( units == "nautical miles" ) {
-    output.push( Convert(value,6.0761e+3, " feet") );
-    output.push( Convert(value,1.8520e+3, " meters") );
-  }
-  else if( units == "yards" ) {
-    output.push( Convert(value,9.1440e+1, " centimeters") );
-    output.push( Convert(value,3.0000,    " feet") );
-    output.push( Convert(value,3.6000e+1, " inches") );
-    output.push( Convert(value,9.1440e-4, " kilometers") );
-    output.push( Convert(value,9.1440e-1, " meters") );
-    output.push( Convert(value,5.6818e-4, " miles") );
-    output.push( Convert(value,1.8182e-1, " rods") );
-  }
-  else if( units == "feet/second" ) {
-    output.push( Convert(value,30.480,  " cm/second") );
-    output.push( Convert(value,1.0973,  " km/hour") );
-    output.push( Convert(value,0.59248, " knots") );
-    output.push( Convert(value,0.30480, " meters/second") );
-    output.push( Convert(value,0.68182, " miles/hour") );
-  }
-  else if( units == "knots" ) {
-    output.push( Convert(value,1.6890,  " feet/second") );
-    output.push( Convert(value,1.1516,  " miles/hour") );
-    output.push( Convert(value,1.8532,  " km/hour") );
-    output.push( Convert(value,0.51480, " meters/second") );
-  }
-  else if( units == "miles/hour" ) {
-    output.push( Convert(value,1.4667,    " feet/second") );
-    output.push( Convert(value,1.6093,    " km/hour") );
-    output.push( Convert(value,8.6898e-1, " knots") );
-    output.push( Convert(value,4.4704e-1, " meters/second") );
-  }
-
-  return output;
-}
-
-function SearchUnits(value : Num , units : String) : Array<String>
-{
 	var unitsDb = [
-		"cm:centimeter:centimeters=centimeter",
-		"ft:feet:foot:'=feet",
-		"in:inches:inch:\"=inches",
-		"km:kilometer:kilometers=kilometers",
-		"m:meter:meters=meters",
-		"mi:mile:miles=miles",
-		"nmi:nautical miles=nautical miles",
-		"yd:yard:yards=yards",
-		"feet/second:fps:ft/s=feet/second",
-		"knots:knot:kt=knots",
-		"miles/hour:mile/hour:mph:mi/hr=miles/hour"
+		"cm:centimeter=3.2808e-2,feet:3.9370e-1,inches:1.0e-5,kilometers:1.0e-2,meters:1.0936e-2,yards",
+		"ft:feet:foot:'=3.0480e+1,centimeters:12.0,inches:3.0480e-4,kilometers:3.0480e-1,meters:1.8939e-4,miles:1.6458e-4,nautical miles:3.3333e-1,yards",
+		"in:inch:\"=2.5400,centimeters:8.3333e-2,feet:2.5400e-2,meters:2.7778e-2,yards",
+		"km:kilometer=3.2808e+3,feet:3.9370e+4,inches:1.0e+3,meters:6.2137e-1,miles:5.3996e-1,nautical miles:1.0936e+3,yards",
+		"m:meter=1.0000e+2,centimeters:3.2808,feet:3.9370e+1,inches:1.0e-3,kilometers:6.2137e-4,miles:5.3996e-4,nautical miles:1.0936,yards",
+		"mi:mile=5.2800e+3,feet:6.3360e+4,inches:1.6093,kilometers:1.6093e+3,meters:3.2000e+2,rods:1.7600e+3,yards",
+		"nmi:nautical mile=6.0761e+3,feet:1.8520e+3,meters",
+		"yd:yard=9.1440e+1,centimeters:3.0000,feet:3.6000e+1,inches:9.1440e-4,kilometers:9.1440e-1,meters:5.6818e-4,miles:1.8182e-1,rods",
+		"feet/s:fps:ft/s:foot/s=30.480,cm/second:1.0973,km/hour:0.59248,knots:0.30480,meters/second:0.68182,miles/hour",
+		"kt:knot=1.6890,feet/second:1.1516,miles/hour:1.8532,km/hour:0.51480,meters/second",
+		"mph:mile/hour:mi/hr=1.4667,feet/second:1.6093,km/hour:8.6898e-1,knots:4.4704e-1,meters/second",
+		"g:gram=1.0000e-3,kilograms:3.5274e-2,ounces:.2046e-3,pounds:9.8067e+2,dynes:9.8067e-3,newtons",
+		"pound:lb:lbs:#=4.5359e+2,grams:4.5359e-1,kilograms:1.6000e+1,ounces"
 	];
-	
+    
 	var output = Array<String>();
 	
 	var i=0;
@@ -185,8 +140,7 @@ function SearchUnits(value : Num , units : String) : Array<String>
 		var match = false;
 		
 		var unitStr = unitsDb[i].split("=");
-		var allUnits = unitStr[0].split(":");
-		var outUnits = unitStr[1];
+		var allUnits = unitStr[0].split(":");	
 		
 		var j=0;
 		while( j<allUnits.length )
@@ -197,7 +151,18 @@ function SearchUnits(value : Num , units : String) : Array<String>
 		
 		if ( match )
 		{
-			output = ConvertData( outUnits , value );
+			var conversion = unitStr[1].split(":");
+			
+			var k=0;
+			while( k<conversion.length )
+			{
+				var temp = conversion.get(k).split(",");
+				var factor = parseNum( temp[0] );
+				
+				output.push( Convert(value , factor , temp[1]) );
+				
+				k=k+1;
+			}
 		}
 		
 		i=i+1;
@@ -206,18 +171,4 @@ function SearchUnits(value : Num , units : String) : Array<String>
 	return output;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//
-//  Converter- function that converts string into differnt units
-function Converter(data : String) : Array<String>
-{
-  var value = parseNum( data );
-  var units = UnitsString( data ).toLowerCase();
-  
-  var output = Array<String>();
-  
-  output = SearchUnits( value , units );
-  
-  return output;
-}
 
