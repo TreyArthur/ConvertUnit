@@ -1,0 +1,24 @@
+ConvertUnit README
+==================
+:description: ConvertUnit is a demo program that does simple scale +
+              unit conversions.  The source is written in mobl +
+              http://www.mobl-lang.org/
+
+Introduction
+------------
+{description}
+
+ConvertUnit is a simple unit conversion program written in mobl.
+To do a conversion, simply type in the value and units.  For example,
+to convert 34 centimeters, type in '34cm'.  The various common conversions
+will be displayed.  Several variants are acceptable for the units (ex, 
+34cm, 34 cm, 34 centimeter).  Note that mobl is fantastic in that you
+don't need to press go, it works as you type.
+
+This software is designed to give common conversions with minimal inputs
+by the user.  Type and the conversions appear.  It does lack generality,
+but who needs to know how many inches are in a light year?
+
+ConvertUnit is free software and is licensed under the terms of the 'GNU
+General Public License version 3' (GPLv3).
+
