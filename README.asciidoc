@@ -1,12 +1,9 @@
 ConvertUnit README
 ==================
-:description: ConvertUnit is a demo program that does simple scale +
-              unit conversions.  The source is written in mobl +
-              http://www.mobl-lang.org/
 
-Introduction
-------------
-{description}
+ConvertUnit is a demo program that does simple scale unit conversions 
+on mobile devices.  The source is written in mobl 
+(http://www.mobl-lang.org/)
 
 ConvertUnit is a simple unit conversion program written in mobl.
 To do a conversion, simply type in the value and units.  For example,
