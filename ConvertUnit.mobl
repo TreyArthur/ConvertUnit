@@ -2,13 +2,14 @@ application ConvertUnit
 
 import mobl::ui::generic
 
+// top page
 screen root() 
 {
 	var unitStr = ""
 	
 	header("Unit Converter")
 	{
-		button("About", onclick={ about(); })
+		button("Help", onclick={ help(); })
 	}
 	
 	group
@@ -24,6 +25,56 @@ screen root()
 	}
 }
 
+// button on header for more info about the app
+screen help()
+{
+	header("Help")
+	{
+		backButton()
+	}
+	
+	group()
+	{
+		item(onclick={ instructions(); }) 
+		{
+  			label("Instructions")
+		}
+		
+		item(onclick={ about(); }) 
+		{
+  			label("About...")
+		}
+	}
+}
+
+// instructions page
+screen instructions()
+{
+	header("Instructions")
+	{
+		backButton()
+	}
+	
+	group()
+	{
+		"ConvertUnit is a simple unit conversion program written in mobl. "
+		"To do a conversion, simply type in the value and units. For example, "
+		"to convert 34 centimeters, type in 34cm. The various common conversions "
+		"will be displayed. Several variants are acceptable for the units "
+		"(ex, 34cm, 34 cm, 34 centimeter). Note that mobl is fantastic in that "
+		"you don’t need to press go, it works as you type."
+		"<br><br>"
+		"This software is designed to give common conversions with minimal inputs "
+		"by the user. Type and the conversions appear. It does lack generality, but "
+		"who needs to know how many inches are in a light year?"
+		"<br><br>"
+		"The source is located on github"
+		"<br><br>"
+	    link("https://TreyArthur@github.com/TreyArthur/ConvertUnit.git")
+	}
+}
+
+// about page
 screen about()
 {
 	header("About")
@@ -60,19 +111,23 @@ function UnitsScrapper( data : String ) : String
 {
   var inData = data.toLowerCase();
   var units = "";
-  var i = 0;
-  while( i<inData.length )
+  
+  var i=0;
+  var foundUnits  = false;
+  while ( !foundUnits && (i<inData.length) )
   {
-    var c = inData.charAt(i);
-    
-    if ( Math.isNaN(parseNum( c )) )
+  	var c = inData.charAt(i);
+  	
+  	if ( Math.isNaN(parseNum( c )) )
     {
       if ( c != " " && c != "." && c != "-" )
-        units = units + c;
+        foundUnits = true;
     }
-    
-    i = i+1;
+  	
+  	i=i+1;
   }
+  
+  units = inData.substring( i-1 , inData.length );
   
   return units;
 }
@@ -116,6 +171,13 @@ function SearchUnits(data : String) : Array<String>
 	var value = parseNum( data );
     var units = UnitsScrapper( data );
 
+	// This is the database of unit conversion factors
+	//  A database entry is separated into 2 parts by the equal (=) sign
+	//   To the left of the equal, the unit to be converted
+	//     - the left entry contains all of the equivalent values, separated by a colon for a 
+	//       unit (ex, ft is the same as foot and feet)
+	//   To the right of the equal, the list of conversion factors and associated unit
+	//     - the factor and units are separated by a comma.
 	var unitsDb = [
 		"cm:centimeter=3.2808e-2,feet:3.9370e-1,inches:1.0e-5,kilometers:1.0e-2,meters:1.0936e-2,yards",
 		"ft:feet:foot:'=3.0480e+1,centimeters:12.0,inches:3.0480e-4,kilometers:3.0480e-1,meters:1.8939e-4,miles:1.6458e-4,nautical miles:3.3333e-1,yards",
@@ -129,19 +191,25 @@ function SearchUnits(data : String) : Array<String>
 		"kt:knot=1.6890,feet/second:1.1516,miles/hour:1.8532,km/hour:0.51480,meters/second",
 		"mph:mile/hour:mi/hr=1.4667,feet/second:1.6093,km/hour:8.6898e-1,knots:4.4704e-1,meters/second",
 		"g:gram=1.0000e-3,kilograms:3.5274e-2,ounces:.2046e-3,pounds:9.8067e+2,dynes:9.8067e-3,newtons",
-		"pound:lb:lbs:#=4.5359e+2,grams:4.5359e-1,kilograms:1.6000e+1,ounces"
+		"pound:lb:lbs:#=4.5359e+2,grams:4.5359e-1,kilograms:1.6000e+1,ounces",
+		"kgm2:kg-m2:kgm^2:kg-m^2=0.738,slug-ft2:106.0,slug-in2:23.7,lb(m)-ft2:3.42e3,lb(m)-in2",
+		"slugft2:slug-ft2=1.36,kg-m2:144.0,slug-in2",
+		"n:newton=0.22481,lbf",
+		"lbf=4.44822,Newtons"
 	];
     
 	var output = Array<String>();
 	
+	// march through all the database entries
 	var i=0;
 	while ( i<unitsDb.length )
 	{
 		var match = false;
 		
-		var unitStr = unitsDb[i].split("=");
-		var allUnits = unitStr[0].split(":");	
+		var unitStr = unitsDb[i].split("=");	// split the current entry 
+		var allUnits = unitStr[0].split(":");	// split the left entry to the equivalent units
 		
+		// check of the units scrapped off equal any of the units in the database
 		var j=0;
 		while( j<allUnits.length )
 		{
@@ -149,17 +217,19 @@ function SearchUnits(data : String) : Array<String>
 			j=j+1;
 		}
 		
+		// the user entered units match units in the database
 		if ( match )
 		{
-			var conversion = unitStr[1].split(":");
+			var conversion = unitStr[1].split(":");	// split the conversion factor-units string
 			
+			// march through each of the factor-unit pairs and find the conversions
 			var k=0;
 			while( k<conversion.length )
 			{
-				var temp = conversion.get(k).split(",");
+				var temp = conversion.get(k).split(",");	// factor and units separated by a comma
 				var factor = parseNum( temp[0] );
 				
-				output.push( Convert(value , factor , temp[1]) );
+				output.push( Convert(value , factor , temp[1]) );	// push each conversion to the string array
 				
 				k=k+1;
 			}
